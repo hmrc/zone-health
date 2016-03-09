@@ -17,15 +17,14 @@
 package uk.gov.hmrc.zonehealth.controllers
 
 import uk.gov.hmrc.play.microservice.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import play.api.mvc._
 import scala.concurrent.Future
 
-object MicroserviceHelloWorld extends MicroserviceHelloWorld
+object MicroserviceHealth extends MicroserviceHealth
 
-trait MicroserviceHelloWorld extends BaseController {
+trait MicroserviceHealth extends BaseController {
 
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
+	def health() = Action.async { implicit request =>
+		Future.successful(Ok)
 	}
 }
