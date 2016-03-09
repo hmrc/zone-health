@@ -25,6 +25,6 @@ object MicroserviceHealth extends MicroserviceHealth
 trait MicroserviceHealth extends BaseController {
 
 	def health() = Action.async { implicit request =>
-		Future.successful(Ok())
+		Future.successful(Ok)
 	}
 }
