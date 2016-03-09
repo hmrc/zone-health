@@ -16,16 +16,18 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import uk.gov.hmrc.play.microservice.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
-import scala.concurrent.Future
+import play.api.http.Status
+import play.api.test.FakeRequest
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-object MicroserviceHelloWorld extends MicroserviceHelloWorld
+class MicroserviceHealthControllerSpec extends UnitSpec with WithFakeApplication {
 
-trait MicroserviceHelloWorld extends BaseController {
+  val fakeRequest = FakeRequest("GET", "/health")
 
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
+  "GET /health" should {
+    "return 200" in {
+      val result = MicroserviceHealth.health()(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+  }
 }
