@@ -16,18 +16,25 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import play.api.http.Status
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import uk.gov.hmrc.play.test.UnitSpec
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class MicroserviceHealthControllerSpec extends UnitSpec with WithFakeApplication {
 
-  val fakeRequest = FakeRequest("GET", "/health")
-
-  "GET /health" should {
+  "GET /zone-health" should {
     "return 200" in {
-      val result = MicroserviceHealth.health()(fakeRequest)
-      status(result) shouldBe Status.OK
+      val result = route(FakeRequest(GET, "/zone-health"))
+      result.isDefined should be(true)
+      await(status(result.get)) should not be (NOT_FOUND)
+    }
+  }
+
+  "GET /zone-health/x" should {
+    "is undefined" in {
+      val result = route(FakeRequest(GET, "/zone-health/x"))
+      result.isDefined should be(false)
     }
   }
 }
