@@ -16,15 +16,26 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import play.api.Play
+import play.api.Play.current
 import play.api.mvc._
+import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.zonehealth.MicroserviceZoneHealthPrivateConnector
+
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object MicroserviceHealth extends MicroserviceHealth
 
 trait MicroserviceHealth extends BaseController {
+	val http = MicroserviceZoneHealthPrivateConnector
 
 	def health() = Action.async { implicit request =>
-		Future.successful(Ok)
+		responseStatus
+	}
+
+	def responseStatus = Play.configuration.getString("zone") match {
+		case Some("public") => http.checkProtectedHealth()
+		case _ => Future(Results.Ok)
 	}
 }

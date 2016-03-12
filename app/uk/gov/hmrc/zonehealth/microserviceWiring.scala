@@ -16,21 +16,32 @@
 
 package uk.gov.hmrc.zonehealth
 
+import play.api.Play.current
+import play.api.libs.ws.{WS, WSResponse}
+import play.api.mvc.Results._
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.auth.microservice.connectors.AuthConnector
-import uk.gov.hmrc.play.config.{AppName, RunMode, ServicesConfig}
-import uk.gov.hmrc.play.http.hooks.HttpHook
-import uk.gov.hmrc.play.http.ws._
+import uk.gov.hmrc.play.config.{RunMode, ServicesConfig}
 
-object WSHttp extends WSGet with WSPut with WSPost with WSDelete with WSPatch with AppName {
-  override val hooks: Seq[HttpHook] = NoneRequired
-}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object MicroserviceAuditConnector extends AuditConnector with RunMode {
   override lazy val auditingConfig = LoadAuditingConfig(s"auditing")
 }
 
-object MicroserviceAuthConnector extends AuthConnector with ServicesConfig {
-  override val authBaseUrl = baseUrl("auth")
+object MicroserviceZoneHealthPrivateConnector extends ServicesConfig {
+  val zoneHealthProtectedUrl = s"${baseUrl(s"zone-health-protected")}/zone-health"
+
+  def checkProtectedHealth() = {
+    WS.url(zoneHealthProtectedUrl)
+      .withRequestTimeout(5000)
+      .get()
+      .recover {
+        case e:AnyRef => e
+      }
+      .map {
+        case r:WSResponse if r.status == 200 => Ok
+        case _ => InternalServerError
+      }
+  }
 }
