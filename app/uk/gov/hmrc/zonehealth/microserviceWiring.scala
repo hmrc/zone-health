@@ -29,7 +29,7 @@ object MicroserviceAuditConnector extends AuditConnector with RunMode {
   override lazy val auditingConfig = LoadAuditingConfig(s"auditing")
 }
 
-object MicroserviceZoneHealthPrivateConnector extends ServicesConfig {
+object MicroserviceZoneHealthProtectedConnector extends ServicesConfig {
   val zoneHealthProtectedUrl = s"${baseUrl(s"zone-health-protected")}/zone-health"
 
   def checkProtectedHealth() = {

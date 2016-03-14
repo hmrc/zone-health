@@ -20,7 +20,7 @@ import play.api.Play
 import play.api.Play.current
 import play.api.mvc._
 import uk.gov.hmrc.play.microservice.controller.BaseController
-import uk.gov.hmrc.zonehealth.MicroserviceZoneHealthPrivateConnector
+import uk.gov.hmrc.zonehealth.MicroserviceZoneHealthProtectedConnector
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object MicroserviceHealth extends MicroserviceHealth
 
 trait MicroserviceHealth extends BaseController {
-	val http = MicroserviceZoneHealthPrivateConnector
+	val http = MicroserviceZoneHealthProtectedConnector
 
 	def health() = Action.async { implicit request =>
 		responseStatus
