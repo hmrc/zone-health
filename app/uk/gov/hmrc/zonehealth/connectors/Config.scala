@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.zonehealth.controllers
+package uk.gov.hmrc.zonehealth.connectors
 
-import play.api.mvc._
-import uk.gov.hmrc.play.microservice.controller.BaseController
-import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
+import play.api.Play
+import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.Play.current
 
-import scala.concurrent.Future
+object Config extends ServicesConfig {
 
-object MicroserviceHealth extends MicroserviceHealth
-
-trait MicroserviceHealth extends BaseController {
-
-	def health() = Action.async { implicit request =>
-    ZoneHealthConnector.maybeCheckDownstreamHealth().getOrElse(Future.successful(Results.Ok))
-	}
-
+  def baseUrlOpt(serviceName: String) = {
+    val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
+    for { host <- Play.configuration.getString(s"$rootServices.$serviceName.host")
+          port <- Play.configuration.getString(s"$rootServices.$serviceName.port")}
+      yield s"$protocol://$host:$port"
+  }
 }

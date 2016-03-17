@@ -16,32 +16,20 @@
 
 package uk.gov.hmrc.zonehealth
 
-import play.api.Play.current
-import play.api.libs.ws.{WS, WSResponse}
-import play.api.mvc.Results._
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
-import uk.gov.hmrc.play.config.{RunMode, ServicesConfig}
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.play.config.RunMode
 
 object MicroserviceAuditConnector extends AuditConnector with RunMode {
   override lazy val auditingConfig = LoadAuditingConfig(s"auditing")
 }
 
-object MicroserviceZoneHealthProtectedConnector extends ServicesConfig {
-  val zoneHealthProtectedUrl = s"${baseUrl(s"zone-health-protected")}/zone-health"
 
-  def checkProtectedHealth() = {
-    WS.url(zoneHealthProtectedUrl)
-      .withRequestTimeout(5000)
-      .get()
-      .recover {
-        case e:AnyRef => e
-      }
-      .map {
-        case r:WSResponse if r.status == 200 => Ok
-        case _ => InternalServerError
-      }
-  }
-}
+//trait ZoneHealthConnector extends ServicesConfig {
+//
+//  def zoneHealthDownstreamUrl:Option[String]
+//
+//
+//}
+
+

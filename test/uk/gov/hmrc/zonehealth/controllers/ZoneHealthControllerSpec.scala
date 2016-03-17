@@ -16,18 +16,25 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import play.api.mvc._
-import uk.gov.hmrc.play.microservice.controller.BaseController
-import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
+import org.scalatestplus.play.OneServerPerTest
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
 
-object MicroserviceHealth extends MicroserviceHealth
+class ZoneHealthControllerSpec extends UnitSpec with OneServerPerTest {
 
-trait MicroserviceHealth extends BaseController {
+  "GET /zone-health with no downstream to check" should {
+    "return 200" in {
+      val result = route(FakeRequest(GET, "/zone-health"))
+      await(status(result.get)) should be (OK)
+    }
+  }
 
-	def health() = Action.async { implicit request =>
-    ZoneHealthConnector.maybeCheckDownstreamHealth().getOrElse(Future.successful(Results.Ok))
-	}
-
+  "GET /zone-health/x" should {
+    "be undefined" in {
+      val result = route(FakeRequest(GET, "/zone-health/x"))
+      result should be (None)
+    }
+  }
 }

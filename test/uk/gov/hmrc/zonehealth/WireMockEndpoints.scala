@@ -50,7 +50,6 @@ trait WireMockEndpoints extends Suite with BeforeAndAfterAll with BeforeAndAfter
     endpointServer.stop()
   }
   override def beforeAll(): Unit ={
-    println(s"starting endpoint server on $endpointPort")
     endpointServer.start()
   }
 

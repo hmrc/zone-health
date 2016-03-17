@@ -36,7 +36,9 @@ private object AppDependencies {
     "uk.gov.hmrc" %% "play-url-binders" % playUrlBindersVersion,
     "uk.gov.hmrc" %% "play-config" % playConfigVersion,
     "uk.gov.hmrc" %% "play-json-logger" % playJsonLoggerVersion,
-    "uk.gov.hmrc" %% "domain" % domainVersion
+    "uk.gov.hmrc" %% "domain" % domainVersion,
+    "org.apache.httpcomponents" % "httpcore" % "4.3.2",
+    "org.apache.httpcomponents" % "httpclient" % "4.3.5"
   )
 
   trait TestDependencies {
