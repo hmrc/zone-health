@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.zonehealth
 
-
 import java.net.ServerSocket
 
 import com.github.tomakehurst.wiremock.WireMockServer

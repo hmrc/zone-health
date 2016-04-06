@@ -19,24 +19,19 @@ private object AppDependencies {
   import play.core.PlayVersion
 
   private val microserviceBootstrapVersion = "4.2.1"
-  private val playAuthVersion = "3.1.0"
   private val playHealthVersion = "1.1.0"
-  private val playJsonLoggerVersion = "2.1.1"  
-  private val playUrlBindersVersion = "1.0.0"
+  private val playJsonLoggerVersion = "2.1.1"
   private val playConfigVersion = "2.0.1"
-  private val domainVersion = "3.5.0"
   private val hmrcTestVersion = "1.4.0"
 
   val compile = Seq(
 
     ws,
     "uk.gov.hmrc" %% "microservice-bootstrap" % microserviceBootstrapVersion,
-    "uk.gov.hmrc" %% "play-authorisation" % playAuthVersion,
     "uk.gov.hmrc" %% "play-health" % playHealthVersion,
-    "uk.gov.hmrc" %% "play-url-binders" % playUrlBindersVersion,
     "uk.gov.hmrc" %% "play-config" % playConfigVersion,
     "uk.gov.hmrc" %% "play-json-logger" % playJsonLoggerVersion,
-    "uk.gov.hmrc" %% "domain" % domainVersion,
+    "uk.gov.hmrc" %% "play-reactivemongo" % "4.6.0",
     "org.apache.httpcomponents" % "httpcore" % "4.3.2",
     "org.apache.httpcomponents" % "httpclient" % "4.3.5"
   )
@@ -50,6 +45,7 @@ private object AppDependencies {
     def apply() = new TestDependencies {
       override lazy val test = Seq(
         "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
+        "uk.gov.hmrc" %% "reactivemongo-test" % "1.5.0" % scope,
         "org.scalatest" %% "scalatest" % "2.2.2" % scope,
         "org.scalatestplus" %% "play" % "1.2.0" % scope,
         "org.pegdown" % "pegdown" % "1.4.2" % scope,
@@ -66,6 +62,7 @@ private object AppDependencies {
 
       override lazy val test = Seq(
         "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
+        "uk.gov.hmrc" %% "reactivemongo-test" % "1.5.0" % scope,
         "org.scalatest" %% "scalatest" % "2.2.2" % scope,
         "org.pegdown" % "pegdown" % "1.4.2" % scope,
         "com.typesafe.play" %% "play-test" % PlayVersion.current % scope

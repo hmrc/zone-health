@@ -44,5 +44,4 @@ trait ZoneHealthConnector{
       }
     }
   }
-
 }
