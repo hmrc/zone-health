@@ -3,13 +3,14 @@ package uk.gov.hmrc.repository
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import reactivemongo.api.DB
 import uk.gov.hmrc.mongo.MongoSpecSupport
-import uk.gov.hmrc.zonehealth.repository.{HealthRepository, ZoneToken}
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.zonehealth.repository.MongoZoneHealthRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class HealthRepositorySpec extends UnitSpec with BeforeAndAfterEach with OptionValues with MongoSpecSupport{
 
-  def repository(implicit mongo: () => DB) = new HealthRepository
+  def repository(implicit mongo: () => DB) = new MongoZoneHealthRepository
 
   val healthRepository = repository
 

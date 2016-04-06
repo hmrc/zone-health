@@ -22,6 +22,7 @@ import uk.gov.hmrc.zonehealth.WireMockEndpoints
 
 import scala.concurrent.Future
 
+
 class ZoneHealthConnectorSpec extends UnitSpec with WireMockEndpoints {
 
   "ZoneHealthConnector" should {

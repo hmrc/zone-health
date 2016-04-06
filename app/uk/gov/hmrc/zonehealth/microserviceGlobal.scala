@@ -16,13 +16,20 @@
 
 package uk.gov.hmrc.zonehealth
 
+import java.util.concurrent.TimeUnit
+
 import com.typesafe.config.Config
-import play.api.{Application, Configuration, Play}
+import play.api.{Application, Configuration, Logger, Play}
 import uk.gov.hmrc.play.audit.filters.AuditFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig, RunMode}
 import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
 import net.ceedubs.ficus.Ficus._
+import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success}
 
 
 object ControllerConfiguration extends ControllerConfig {
@@ -44,4 +51,29 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with RunMode {
   override val loggingFilter = MicroserviceLoggingFilter
   override val microserviceAuditFilter = MicroserviceAuditFilter
   override val authFilter = None
+
+//  override def onStart(app: Application) {
+//
+//    import scala.concurrent.ExecutionContext.Implicits.global
+//
+//    Logger.info("Zone-Health starting up, will put initial token into mongo...")
+//
+//    Future {
+//      Thread.sleep(10000)
+//      val putF = HealthRepository.apply().putToken()
+//
+//      Await.ready(putF, Duration(10, TimeUnit.SECONDS))
+//
+//      putF.onComplete {
+//        case Success(s) => {
+//          Logger.info("initial token successfully inserted into Mongo, continuing startup")
+//          super.onStart(app)
+//        }
+//        case Failure(e) => {
+//          Logger.error("failed to insert token into Mongo, halting service with System.exit")
+//          System.exit(-1)
+//        }
+//      }
+//    }
+//  }
 }

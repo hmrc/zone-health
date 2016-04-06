@@ -16,18 +16,27 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
+import play.api.libs.iteratee.Enumerator
 import play.api.mvc._
+import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
 import uk.gov.hmrc.play.microservice.controller.BaseController
 import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
-
-import scala.concurrent.Future
+import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
+import uk.gov.hmrc.zonehealth.service.ZoneHealthService
 
 object MicroserviceHealth extends MicroserviceHealth
 
 trait MicroserviceHealth extends BaseController {
 
-	def health() = Action.async { implicit request =>
-    ZoneHealthConnector.maybeCheckDownstreamHealth().getOrElse(Future.successful(Results.Ok))
-	}
+	val zoneHealthService = new ZoneHealthService {
+    override def mongoRepository = ZoneHealthRepository()
+    override def downstreamConnector:ZoneHealthConnector = ZoneHealthConnector
+  }
 
+	def health() = Action.async { implicit request =>
+    zoneHealthService.checkHealth().map {
+      case Right(_) => Results.Ok
+      case Left(e)  => Results.BadGateway.copy(body = Enumerator(e.getBytes))
+    }
+	}
 }

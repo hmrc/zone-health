@@ -32,19 +32,25 @@ object ZoneToken {
   implicit val mongoOFormats: OFormat[ZoneToken] = Json.format[ZoneToken]
 }
 
-class HealthRepository(implicit mongo: () => DB)
+object ZoneHealthRepository extends MongoDbConnection {
+
+  private lazy val zoneHealthRepository = new MongoZoneHealthRepository
+
+  def apply() = zoneHealthRepository
+}
+
+trait ZoneHealthRepository{
+  def tokenExists(): Future[Boolean]
+  def putToken(): Future[Unit]
+}
+
+class MongoZoneHealthRepository(implicit mongo: () => DB)
   extends ReactiveRepository[ZoneToken, String](
     "zone-health",
     mongo,
     ZoneToken.mongoFormats,
-    implicitly[Format[String]]) {
+    implicitly[Format[String]]) with ZoneHealthRepository{
 
-  object HealthRepository extends MongoDbConnection {
-
-    private lazy val healthRepository = new HealthRepository
-
-    def apply() = healthRepository
-  }
 
   private val TheZoneToken = ZoneToken("1")
 
