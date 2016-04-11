@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hmrc/zone-health.svg?branch=master)](https://travis-ci.org/hmrc/zone-health) [ ![Download](https://api.bintray.com/packages/hmrc/releases/zone-health/images/download.svg) ](https://bintray.com/hmrc/releases/zone-health/_latestVersion)
 
-Zone health checker
+Zone health check microservice
 
 ### License
 
