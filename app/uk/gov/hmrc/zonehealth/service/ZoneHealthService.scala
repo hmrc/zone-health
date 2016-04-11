@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.zonehealth.service
 
+import play.api.Logger
 import play.api.mvc.Results
 import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
@@ -38,14 +39,20 @@ trait ZoneHealthService{
       case (true, e) => e
       case (false, Left(e)) => Left(s"mongo is unavailable, $e")
       case (false, Right(e)) => Left(s"mongo is unavailable")
-    }).recover { case e => /*e.printStackTrace();*/ Left(s"exception getting zone health: '${e.getMessage}'") }
+    }).recover { case e =>
+      Logger.warn(s"exception getting zone health: '${e.getMessage}'", e)
+      Left(s"exception getting zone health: '${e.getMessage}'")
+    }
   }
 
   private def doDownStreamCheck():Future[Either[String, Unit]] = {
     downstreamConnector.maybeCheckDownstreamHealth().map { ft => ft
       .map {
         case Results.Ok => Right()
-        case fail => Left(s"downstream returned ${fail.header.status}")
+        case fail => {
+          Logger.warn(s"downstream returned ${fail.header.status}")
+          Left(s"downstream returned ${fail.header.status}")
+        }
       }
       .recover { case t => Left(t.getMessage) }
     }.getOrElse(Future.successful(Right()))

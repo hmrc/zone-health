@@ -1,6 +1,6 @@
 while :
     do
         curl http://localhost:9000/zone-health
-        echo "$?"
-        sleep 3
+        echo "$? $(date +"%r")"
+        sleep 0.1
 done
