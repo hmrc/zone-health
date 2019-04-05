@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 
 package uk.gov.hmrc.zonehealth.repository
 
+import com.google.inject.Inject
 import play.api.libs.json._
-import play.modules.reactivemongo.MongoDbConnection
-import reactivemongo.api.DB
+import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.play.json.ImplicitBSONHandlers._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,22 +33,15 @@ object ZoneToken {
   implicit val mongoOFormats: OFormat[ZoneToken] = Json.format[ZoneToken]
 }
 
-object ZoneHealthRepository extends MongoDbConnection {
-
-  private lazy val zoneHealthRepository = new MongoZoneHealthRepository
-
-  def apply() = zoneHealthRepository
-}
-
 trait ZoneHealthRepository{
   def tokenExists(): Future[Boolean]
   def putToken(): Future[Unit]
 }
 
-class MongoZoneHealthRepository(implicit mongo: () => DB)
+class MongoZoneHealthRepository @Inject() (mongoComponent: ReactiveMongoComponent)
   extends ReactiveRepository[ZoneToken, String](
     "zone-health",
-    mongo,
+    mongoComponent.mongoConnector.db,
     ZoneToken.mongoFormats,
     implicitly[Format[String]]) with ZoneHealthRepository{
 

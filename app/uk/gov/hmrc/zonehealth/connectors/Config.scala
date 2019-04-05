@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,38 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.zonehealth.connectors
-
-import play.api.Play
-import uk.gov.hmrc.play.config.ServicesConfig
-import play.api.Play.current
-
-object Config extends ServicesConfig {
-
-  def baseUrlOpt(serviceName: String) = {
-    val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
-    for { host <- Play.configuration.getString(s"$rootServices.$serviceName.host")
-          port <- Play.configuration.getString(s"$rootServices.$serviceName.port")}
-      yield s"$protocol://$host:$port"
-  }
-}
+///*
+// * Copyright 2019 HM Revenue & Customs
+// *
+// * Licensed under the Apache License, Version 2.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *     http://www.apache.org/licenses/LICENSE-2.0
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
+//
+//package uk.gov.hmrc.zonehealth.connectors
+//
+//import play.api.Configuration
+//import play.api.Mode.Mode
+//import uk.gov.hmrc.play.config.ServicesConfig
+//
+//object Config extends ServicesConfig {
+//
+//  def baseUrlOpt(serviceName: String) = {
+//    val protocol = getConfString(s"$serviceName.protocol",defaultProtocol)
+//    for { host <- runModeConfiguration.getString(s"$rootServices.$serviceName.host")
+//          port <- runModeConfiguration.getString(s"$rootServices.$serviceName.port")}
+//      yield s"$protocol://$host:$port"
+//  }
+//
+//  override protected def mode: Mode = ???
+//
+//  override protected def runModeConfiguration: Configuration = ???
+//}

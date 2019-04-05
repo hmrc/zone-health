@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,56 +16,49 @@
 
 package uk.gov.hmrc.zonehealth.connectors
 
-import play.api.test.{FakeApplication, WithApplication}
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.zonehealth.WireMockEndpoints
+import org.scalatest._
+import org.scalatest.mockito.MockitoSugar
+import org.mockito.Mockito._
+import play.api.mvc.Result
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits._
 
 
-class ZoneHealthConnectorSpec extends UnitSpec with WireMockEndpoints {
+class ZoneHealthConnectorSpec extends FlatSpec with Matchers with MockitoSugar {
 
-  "ZoneHealthConnector" should {
+  "ZoneHealthConnector" should
     "not try to connect to downstream when none is configured" in {
-      val conn = new ZoneHealthConnector(){
-        override def httpGetStatus: (String) => Future[Int] = ???
-        override def zoneHealthDownstreamUrl: Option[String] = None
-      }
+      val conn = new ZoneHealthConnector(mock[ZoneHealthDownstream], None)
 
       conn.maybeCheckDownstreamHealth() shouldBe None
     }
 
-    "return Some(500) when downstream is configured and returns 500" in {
-      zoneHealthProtectedEndpointResponse((500, None))
+    it should "return Some(500) when downstream is configured and returns 500" in {
+      val downstream = mock[ZoneHealthDownstream]
 
-      val conn = new ZoneHealthConnector(){
-        override def httpGetStatus = (s) => Future.successful(500)
-        override def zoneHealthDownstreamUrl: Option[String] = Some("")
-      }
+      when(downstream.httpGetStatus("foo")).thenReturn(Future.successful(500))
+      val conn = new ZoneHealthConnector(downstream, Some(DownstreamInstance("foo")))
 
-      status(conn.maybeCheckDownstreamHealth().get) shouldBe 500
+      conn.maybeCheckDownstreamHealth().get map {r => r.header.status shouldBe 500}
     }
 
-    "return Some(500) when downstream is configured and the call fails" ignore {
-      zoneHealthProtectedEndpointResponse((500, None))
+    it should "return Some(500) when downstream is configured and the call fails" in {
+      val downstream = mock[ZoneHealthDownstream]
+      when(downstream.httpGetStatus("foo")).thenReturn(Future.failed(new RuntimeException("failed")))
 
-      val conn = new ZoneHealthConnector(){
-        override def httpGetStatus = (s) => Future.failed(new RuntimeException("failed"))
-        override def zoneHealthDownstreamUrl: Option[String] = Some("")
-      }
+      val conn = new ZoneHealthConnector(downstream, Some(DownstreamInstance("foo")))
 
-      status(conn.maybeCheckDownstreamHealth().get) shouldBe 500
+      conn.maybeCheckDownstreamHealth().get map {r => r.header.status shouldBe 500}
     }
 
-    "return Some(200) when downstream is configured and returns 200" in new WithApplication(FakeApplication()){
-      zoneHealthProtectedEndpointResponse((200, None))
+    it should "return Some(200) when downstream is configured and returns 200" in {
+      val downstream = mock[ZoneHealthDownstream]
 
-      val conn = new ZoneHealthConnector(){
-        override def httpGetStatus = (s) => Future.successful(200)
-        override def zoneHealthDownstreamUrl: Option[String] = Some(s"")
-      }
+      when(downstream.httpGetStatus("foo")).thenReturn(Future.successful(200))
+      val conn = new ZoneHealthConnector(downstream, Some(DownstreamInstance("foo")))
 
-      status(conn.maybeCheckDownstreamHealth().get) shouldBe 200
+      conn.maybeCheckDownstreamHealth().get map {r => r.header.status shouldBe 200}
     }
-  }
 }
