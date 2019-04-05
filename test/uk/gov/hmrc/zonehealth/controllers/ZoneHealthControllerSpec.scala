@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,34 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import org.scalatestplus.play.OneServerPerTest
+import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.scalatest.mockito.MockitoSugar
+import org.scalatestplus.play._
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
+import play.api.inject.bind
+import org.mockito.Mockito._
+import play.api.Application
 
+import scala.concurrent.Future
 
-class ZoneHealthControllerSpec extends UnitSpec with OneServerPerTest {
+class ZoneHealthControllerSpec extends PlaySpec with GuiceOneAppPerSuite  with ScalaFutures with IntegrationPatience with MockitoSugar {
+
+  private val zoneHealthRepo = mock[ZoneHealthRepository]
+
+  when(zoneHealthRepo.putToken()).thenReturn(Future.successful(()))
+  when(zoneHealthRepo.tokenExists()).thenReturn(Future.successful(true))
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(bind[ZoneHealthRepository].to(zoneHealthRepo))
+    .build()
 
   "GET /zone-health with no downstream to check" should {
     "return 200" in {
       val result = route(FakeRequest(GET, "/zone-health"))
-      await(status(result.get)) should be (OK)
-    }
-  }
-
-  "GET /zone-health/x" should {
-    "be undefined" in {
-      val result = route(FakeRequest(GET, "/zone-health/x"))
-      result should be (None)
+      status(result.get) must be(OK)
     }
   }
 }

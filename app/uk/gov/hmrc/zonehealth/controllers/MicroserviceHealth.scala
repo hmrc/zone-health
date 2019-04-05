@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,21 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import play.api.libs.iteratee.Enumerator
+import akka.util.ByteString
+import com.google.inject.Inject
+import play.api.http.HttpEntity
 import play.api.mvc._
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import uk.gov.hmrc.play.microservice.controller.BaseController
-import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
-import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import uk.gov.hmrc.zonehealth.service.ZoneHealthService
+import scala.concurrent.ExecutionContext
 
-object MicroserviceHealth extends MicroserviceHealth
 
-trait MicroserviceHealth extends BaseController {
-
-	val zoneHealthService = new ZoneHealthService {
-    override def mongoRepository = ZoneHealthRepository()
-    override def downstreamConnector:ZoneHealthConnector = ZoneHealthConnector
-  }
+class MicroserviceHealth @Inject() (zoneHealthService: ZoneHealthService)(implicit executionContext: ExecutionContext) extends BaseController {
 
 	def health() = Action.async { implicit request =>
     zoneHealthService.checkHealth().map {
       case Right(_) => Results.Ok
-      case Left(e)  => Results.BadGateway.copy(body = Enumerator(e.getBytes))
+      case Left(e)  => Results.BadGateway.copy(body = HttpEntity.Strict(ByteString(e.getBytes), None))
     }
 	}
 }
