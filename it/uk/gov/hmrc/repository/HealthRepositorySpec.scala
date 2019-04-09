@@ -2,7 +2,7 @@ package uk.gov.hmrc.repository
 
 import java.io.File
 
-import com.dimafeng.testcontainers.{Container, DockerComposeContainer, ExposedService, ForAllTestContainer, GenericContainer}
+import com.dimafeng.testcontainers.{Container, DockerComposeContainer, ExposedService, ForAllTestContainer}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.PlaySpec
@@ -20,10 +20,14 @@ class HealthRepositorySpec extends PlaySpec with GuiceOneServerPerSuite with Bef
   // starting docker containers within Jenkins. Alternatively run `docker-compose up` within the it/resources folder to
   // start a container manually.
 
-
 //  with ForAllTestContainer  {
+//
+//  private val dockerComposePath: String = getClass.getResource("/docker-compose.yml").getPath
+//
 //  override val container: Container = DockerComposeContainer(new File(dockerComposePath),
 //    exposedServices = Seq(ExposedService("mongo", 27017)))
+
+
   val healthRepository = app.injector.instanceOf[MongoZoneHealthRepository]
 
   override def beforeEach() {
@@ -40,6 +44,5 @@ class HealthRepositorySpec extends PlaySpec with GuiceOneServerPerSuite with Bef
       Await.result(healthRepository.tokenExists(), 1.second) must be(true)
     }
   }
-  private val dockerComposePath: String = getClass.getResource("/docker-compose.yml").getPath
 }
 
