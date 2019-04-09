@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.zonehealth.service
 
-import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
+import org.scalatest.{AsyncFlatSpec, Matchers}
+import uk.gov.hmrc.zonehealth.connectors.{DownstreamInstance, ZoneHealthConnector, ZoneHealthDownstream}
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
+import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
-class ZoneHealthServiceSpec extends UnitSpec {
+class ZoneHealthServiceSpec extends AsyncFlatSpec with Matchers {
 
-  "ZoneHealthService" should {
-
+  "ZoneHealthService" should
     "return Right when a dependent service is OK and mongo-health has returned correctly" in {
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(200),
@@ -33,20 +33,20 @@ class ZoneHealthServiceSpec extends UnitSpec {
         mongoTokenExists = Future.successful(true)
       ).build()
 
-      await(zoneHealthService.checkHealth()) shouldBe Right()
+      zoneHealthService.checkHealth() map {r => r shouldBe Right()}
     }
 
-    "return Left when a dependent service has Failed and mongo-health has returned correctly" in {
+    it should "return Left when a dependent service has Failed and mongo-health has returned correctly" in {
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(500),
         mongoPutTokenResult = Future.successful(),
         mongoTokenExists = Future.successful(true)
       ).build()
 
-      await(zoneHealthService.checkHealth()) shouldBe Left("downstream returned 500")
+      zoneHealthService.checkHealth() map {r => r shouldBe Left("downstream returned 500") }
     }
 
-    "return Left when a dependent service is available and mongo-health has failed to write" in {
+    it should "return Left when a dependent service is available and mongo-health has failed to write" in {
       val MongoErrorMessage = "Mongo Error"
 
       val zoneHealthService = ZoneHealthServiceBuilder(
@@ -55,20 +55,20 @@ class ZoneHealthServiceSpec extends UnitSpec {
         mongoTokenExists = Future.successful(true)
       ).build()
 
-      await(zoneHealthService.checkHealth()) shouldBe Left("exception getting zone health: 'Mongo Error'")
+      zoneHealthService.checkHealth() map {r => r shouldBe Left("exception getting zone health: 'Mongo Error'") }
     }
 
-    "return Left when a dependent service is available and mongo-health has failed to read back the token" in {
+    it should "return Left when a dependent service is available and mongo-health has failed to read back the token" in {
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(200),
         mongoPutTokenResult = Future.successful(),
         mongoTokenExists = Future.successful(false)
       ).build()
 
-      await(zoneHealthService.checkHealth()) shouldBe Left("mongo is unavailable")
+      zoneHealthService.checkHealth() map {r => r shouldBe Left("mongo is unavailable") }
     }
 
-    "return Left when a dependent service is available and mongo-health got an exception when reading back the token" in {
+    it should "return Left when a dependent service is available and mongo-health got an exception when reading back the token" in {
       val MongoErrorMessage = "Mongo Error"
 
       val zoneHealthService = ZoneHealthServiceBuilder(
@@ -77,10 +77,10 @@ class ZoneHealthServiceSpec extends UnitSpec {
         mongoTokenExists = Future.failed(new Exception(MongoErrorMessage))
       ).build()
 
-      await(zoneHealthService.checkHealth()) shouldBe Left("exception getting zone health: 'Mongo Error'")
+      zoneHealthService.checkHealth() map { r => r shouldBe Left("exception getting zone health: 'Mongo Error'") }
     }
   }
-}
+
 
 
 case class ZoneHealthServiceBuilder(
@@ -89,15 +89,20 @@ case class ZoneHealthServiceBuilder(
                                      mongoPutTokenResult: Future[Unit] = Future.successful(),
                                      mongoTokenExists: Future[Boolean] = Future.successful(true)
                                    ){
-  def build():ZoneHealthService = new ZoneHealthService {
-    override def downstreamConnector = new ZoneHealthConnector{
-      override def zoneHealthDownstreamUrl: Option[String] = downstreamUrl
-      override def httpGetStatus: (String) => Future[Int] = (s) => downstreamStatus
-    }
+  def build():ZoneHealthService = {
 
-    override def mongoRepository = new ZoneHealthRepository{
-      override def tokenExists(): Future[Boolean] = mongoTokenExists
-      override def putToken(): Future[Unit] = mongoPutTokenResult
-    }
+    val downstream = mock(classOf[ZoneHealthDownstream])
+
+    downstreamUrl.map(ds => when(downstream.httpGetStatus(ds)).thenReturn(downstreamStatus))
+
+    val downstreamConnector = new ZoneHealthConnector(downstream, downstreamUrl.map(DownstreamInstance))
+
+    new ZoneHealthService(
+      downstreamConnector,
+      new ZoneHealthRepository {
+        override def tokenExists(): Future[Boolean] = mongoTokenExists
+        override def putToken(): Future[Unit] = mongoPutTokenResult
+      }
+    )
   }
 }

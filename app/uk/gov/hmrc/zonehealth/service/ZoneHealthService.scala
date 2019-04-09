@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.zonehealth.service
 
+import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Results
 import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
@@ -24,10 +25,8 @@ import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait ZoneHealthService{
+class ZoneHealthService @Inject() (downstreamConnector: ZoneHealthConnector, mongoRepository: ZoneHealthRepository){
 
-  def downstreamConnector:ZoneHealthConnector
-  def mongoRepository:ZoneHealthRepository
 
   def checkHealth(): Future[Either[String, Unit]] ={
     val result: Future[(Boolean, Either[String, Unit])] = for {
