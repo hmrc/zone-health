@@ -16,7 +16,6 @@ object AppDependencies {
     "com.typesafe.play" %% "play-test"          % PlayVersion.current % "test",
     "uk.gov.hmrc"       %% "reactivemongo-test" % "4.8.0-play-25"     % "test",
     "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % Test,
-    "com.github.tomakehurst" % "wiremock" % "1.52" % "test",
     "org.mockito" % "mockito-core" % "2.26.0" % Test
   )
   
@@ -29,6 +28,6 @@ object AppDependencies {
     "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % "it",
     "com.github.tomakehurst" % "wiremock" % "1.52" % "it",
     "org.mockito" % "mockito-core" % "2.26.0" % "it",
-    "com.dimafeng" %% "testcontainers-scala" % "0.23.0" % "it"
+    "com.dimafeng" %% "testcontainers-scala" % "0.24.0" % "it"
   )
 }
