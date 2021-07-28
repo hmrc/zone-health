@@ -3,7 +3,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 val silencerVersion = "1.7.3"
 
 lazy val microservice = Project("zone-health", file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
     scalaVersion        := "2.12.13",
     majorVersion        := 0,

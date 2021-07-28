@@ -41,7 +41,7 @@ import uk.gov.hmrc.zonehealth.repository.{MongoZoneHealthRepository, ZoneHealthR
 class Module(
               environment: Environment,
               configuration: Configuration)  extends AbstractModule {
-  def configure() = {
+  override def configure() = {
     bind(classOf[ZoneHealthRepository]).to(classOf[MongoZoneHealthRepository])
   }
 
