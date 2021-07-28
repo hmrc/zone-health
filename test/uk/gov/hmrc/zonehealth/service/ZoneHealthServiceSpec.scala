@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,29 @@
 
 package uk.gov.hmrc.zonehealth.service
 
-import org.scalatest.{AsyncFlatSpec, Matchers}
 import uk.gov.hmrc.zonehealth.connectors.{DownstreamInstance, ZoneHealthConnector, ZoneHealthDownstream}
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
 import org.mockito.Mockito._
 
 import scala.concurrent.Future
 
-class ZoneHealthServiceSpec extends AsyncFlatSpec with Matchers {
+class ZoneHealthServiceSpec extends org.scalatest.flatspec.AsyncFlatSpec with org.scalatest.matchers.should.Matchers {
 
   "ZoneHealthService" should
     "return Right when a dependent service is OK and mongo-health has returned correctly" in {
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(200),
-        mongoPutTokenResult = Future.successful(),
+        mongoPutTokenResult = Future.successful((): Unit),
         mongoTokenExists = Future.successful(true)
       ).build()
 
-      zoneHealthService.checkHealth() map {r => r shouldBe Right()}
+      zoneHealthService.checkHealth() map {r => r shouldBe Right((): Unit)}
     }
 
     it should "return Left when a dependent service has Failed and mongo-health has returned correctly" in {
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(500),
-        mongoPutTokenResult = Future.successful(),
+        mongoPutTokenResult = Future.successful((): Unit),
         mongoTokenExists = Future.successful(true)
       ).build()
 
@@ -61,7 +60,7 @@ class ZoneHealthServiceSpec extends AsyncFlatSpec with Matchers {
     it should "return Left when a dependent service is available and mongo-health has failed to read back the token" in {
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(200),
-        mongoPutTokenResult = Future.successful(),
+        mongoPutTokenResult = Future.successful((): Unit),
         mongoTokenExists = Future.successful(false)
       ).build()
 
@@ -73,7 +72,7 @@ class ZoneHealthServiceSpec extends AsyncFlatSpec with Matchers {
 
       val zoneHealthService = ZoneHealthServiceBuilder(
         downstreamStatus = Future.successful(200),
-        mongoPutTokenResult = Future.successful(),
+        mongoPutTokenResult = Future.successful((): Unit),
         mongoTokenExists = Future.failed(new Exception(MongoErrorMessage))
       ).build()
 
@@ -86,7 +85,7 @@ class ZoneHealthServiceSpec extends AsyncFlatSpec with Matchers {
 case class ZoneHealthServiceBuilder(
                                      downstreamUrl:Option[String] = Some("zone-health-url"),
                                      downstreamStatus:Future[Int] = Future.successful(200),
-                                     mongoPutTokenResult: Future[Unit] = Future.successful(),
+                                     mongoPutTokenResult: Future[Unit] = Future.successful((): Unit),
                                      mongoTokenExists: Future[Boolean] = Future.successful(true)
                                    ){
   def build():ZoneHealthService = {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package uk.gov.hmrc.zonehealth.controllers
 
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -25,7 +25,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
 import play.api.inject.bind
-import org.mockito.Mockito._
 import play.api.Application
 
 import scala.concurrent.Future
@@ -42,7 +41,7 @@ class ZoneHealthControllerSpec extends PlaySpec with GuiceOneAppPerSuite  with S
 
   "GET /zone-health with no downstream to check" should {
     "return 200" in {
-      val result = route(FakeRequest(GET, "/zone-health"))
+      val result = route(app, FakeRequest(GET, "/zone-health"))
       status(result.get) must be(OK)
     }
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import akka.util.ByteString
 import com.google.inject.Inject
 import play.api.http.HttpEntity
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.zonehealth.service.ZoneHealthService
 import scala.concurrent.ExecutionContext
 
 
-class MicroserviceHealth @Inject() (zoneHealthService: ZoneHealthService)(implicit executionContext: ExecutionContext) extends BaseController {
+class MicroserviceHealth @Inject()(cc: ControllerComponents)(zoneHealthService: ZoneHealthService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-	def health() = Action.async { implicit request =>
+	def health() = Action.async {
     zoneHealthService.checkHealth().map {
       case Right(_) => Results.Ok
       case Left(e)  => Results.BadGateway.copy(body = HttpEntity.Strict(ByteString(e.getBytes), None))
