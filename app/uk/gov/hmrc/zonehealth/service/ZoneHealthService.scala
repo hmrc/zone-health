@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import scala.concurrent.Future
 
 class ZoneHealthService @Inject() (downstreamConnector: ZoneHealthConnector, mongoRepository: ZoneHealthRepository){
 
+  val logger: Logger = Logger(this.getClass)
 
   def checkHealth(): Future[Either[String, Unit]] ={
     val result: Future[(Boolean, Either[String, Unit])] = for {
@@ -39,7 +40,7 @@ class ZoneHealthService @Inject() (downstreamConnector: ZoneHealthConnector, mon
       case (false, Left(e)) => Left(s"mongo is unavailable, $e")
       case (false, Right(e)) => Left(s"mongo is unavailable")
     }).recover { case e =>
-      Logger.warn(s"exception getting zone health: '${e.getMessage}'", e)
+      logger.warn(s"exception getting zone health: '${e.getMessage}'", e)
       Left(s"exception getting zone health: '${e.getMessage}'")
     }
   }
@@ -49,7 +50,7 @@ class ZoneHealthService @Inject() (downstreamConnector: ZoneHealthConnector, mon
       .map {
         case Results.Ok => Right()
         case fail => {
-          Logger.warn(s"downstream returned ${fail.header.status}")
+          logger.warn(s"downstream returned ${fail.header.status}")
           Left(s"downstream returned ${fail.header.status}")
         }
       }
