@@ -20,12 +20,12 @@ import akka.util.ByteString
 import com.google.inject.Inject
 import play.api.http.HttpEntity
 import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.zonehealth.service.ZoneHealthService
 import scala.concurrent.ExecutionContext
 
 
-class MicroserviceHealth @Inject()(cc: ControllerComponents)(zoneHealthService: ZoneHealthService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+class MicroserviceHealth @Inject()(cc: MessagesControllerComponents)(zoneHealthService: ZoneHealthService)(implicit executionContext: ExecutionContext) extends FrontendController(cc) {
 
 	def health() = Action.async {
     zoneHealthService.checkHealth().map {
