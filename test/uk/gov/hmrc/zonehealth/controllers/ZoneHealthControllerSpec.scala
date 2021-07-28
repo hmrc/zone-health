@@ -25,7 +25,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
 import play.api.inject.bind
-import org.mockito.Mockito._
 import play.api.Application
 
 import scala.concurrent.Future

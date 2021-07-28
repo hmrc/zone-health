@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext
 
 class MicroserviceHealth @Inject()(cc: ControllerComponents)(zoneHealthService: ZoneHealthService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-	def health() = Action.async { implicit request =>
+	def health() = Action.async {
     zoneHealthService.checkHealth().map {
       case Right(_) => Results.Ok
       case Left(e)  => Results.BadGateway.copy(body = HttpEntity.Strict(ByteString(e.getBytes), None))

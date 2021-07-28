@@ -48,14 +48,14 @@ class ZoneHealthService @Inject() (downstreamConnector: ZoneHealthConnector, mon
   private def doDownStreamCheck():Future[Either[String, Unit]] = {
     downstreamConnector.maybeCheckDownstreamHealth().map { ft => ft
       .map {
-        case Results.Ok => Right()
+        case Results.Ok => Right((): Unit)
         case fail => {
           logger.warn(s"downstream returned ${fail.header.status}")
           Left(s"downstream returned ${fail.header.status}")
         }
       }
       .recover { case t => Left(t.getMessage) }
-    }.getOrElse(Future.successful(Right()))
+    }.getOrElse(Future.successful(Right((): Unit)))
   }
 
   private def doMongoCheck(): Future[Boolean] = mongoRepository.putToken().flatMap { _ => mongoRepository.tokenExists() }

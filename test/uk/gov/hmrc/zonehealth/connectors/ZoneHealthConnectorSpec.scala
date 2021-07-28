@@ -15,18 +15,12 @@
  */
 
 package uk.gov.hmrc.zonehealth.connectors
-
-import org.scalatest._
 import org.mockito.MockitoSugar
-import org.mockito.Mockito._
-import play.api.mvc.Result
-
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits._
 
 
-class ZoneHealthConnectorSpec extends FlatSpec with Matchers with MockitoSugar {
+class ZoneHealthConnectorSpec extends org.scalatest.flatspec.AnyFlatSpec with org.scalatest.matchers.should.Matchers with MockitoSugar {
 
   "ZoneHealthConnector" should
     "not try to connect to downstream when none is configured" in {
