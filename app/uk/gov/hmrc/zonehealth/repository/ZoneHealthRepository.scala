@@ -40,12 +40,6 @@ trait ZoneHealthRepository{
   def putToken(): Future[Unit]
 }
 
-//class MongoZoneHealthRepository @Inject() (mongoComponent: ReactiveMongoComponent)
-//  extends ReactiveRepository[ZoneToken, String](
-//    "zone-health",
-//    mongoComponent.mongoConnector.db,
-//    ZoneToken.mongoFormats,
-//    implicitly[Format[String]]) with ZoneHealthRepository{
 class MongoZoneHealthRepository @Inject()(mongo: MongoComponent) extends PlayMongoRepository[ZoneToken](
     mongoComponent = mongo,
     collectionName = "zone-health",
@@ -55,19 +49,22 @@ class MongoZoneHealthRepository @Inject()(mongo: MongoComponent) extends PlayMon
 
   private val TheZoneToken = ZoneToken("1")
 
-//  def tokenExists(): Future[Boolean] = find("value" -> JsString(TheZoneToken.value))
-//    .map(_.headOption.exists(_ == TheZoneToken))
-  def tokenExists(): Future[Boolean] = collection.find(equal("value", TheZoneToken.value)).headOption()
-    .map(_.exists(_ == TheZoneToken))
+  def tokenExists(): Future[Boolean] =
+    collection
+      .find(
+        equal("value", TheZoneToken.value)
+      )
+      .headOption()
+      .map(_.exists(_ == TheZoneToken))
 
   def putToken(): Future[Unit] = {
-//    import reactivemongo.bson.BSONDocument
-//    val selector = BSONDocument("value" -> TheZoneToken.value)
-//    collection.update(selector, TheZoneToken, upsert = true).map(_ => ())
-    collection.findOneAndUpdate(
-      filter = equal("value", TheZoneToken.value),
-      update = set("value", TheZoneToken.value),
-      options = FindOneAndUpdateOptions().upsert(true)
-    ).toFuture().map(_ => ())
+    collection
+      .findOneAndUpdate(
+        filter = equal("value", TheZoneToken.value),
+        update = set("value", TheZoneToken.value),
+        options = FindOneAndUpdateOptions().upsert(true)
+      )
+      .toFuture()
+      .map(_ => ())
   }
 }
