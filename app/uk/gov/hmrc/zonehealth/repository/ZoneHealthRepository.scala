@@ -17,13 +17,14 @@
 package uk.gov.hmrc.zonehealth.repository
 
 import com.google.inject.Inject
+import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Updates.set
 import play.api.libs.json._
-import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.play.json.ImplicitBSONHandlers._
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 case class ZoneToken(value:String = "1")
@@ -38,22 +39,29 @@ trait ZoneHealthRepository{
   def putToken(): Future[Unit]
 }
 
-class MongoZoneHealthRepository @Inject() (mongoComponent: ReactiveMongoComponent)
-  extends ReactiveRepository[ZoneToken, String](
-    "zone-health",
-    mongoComponent.mongoConnector.db,
+//class MongoZoneHealthRepository @Inject() (mongoComponent: ReactiveMongoComponent)
+//  extends ReactiveRepository[ZoneToken, String](
+//    "zone-health",
+//    mongoComponent.mongoConnector.db,
+//    ZoneToken.mongoFormats,
+//    implicitly[Format[String]]) with ZoneHealthRepository{
+class MongoZoneHealthRepository @Inject()(mongo: MongoComponent) extends PlayMongoRepository[ZoneToken](
+    mongoComponent = mongo,
+    collectionName = "zone-health",
     ZoneToken.mongoFormats,
-    implicitly[Format[String]]) with ZoneHealthRepository{
+    implicitly[Seq[org.mongodb.scala.model.IndexModel]]) with ZoneHealthRepository{
 
 
   private val TheZoneToken = ZoneToken("1")
 
-  def tokenExists(): Future[Boolean] = find("value" -> JsString(TheZoneToken.value))
+//  def tokenExists(): Future[Boolean] = find("value" -> JsString(TheZoneToken.value))
+  def tokenExists(): Future[Boolean] = collection.find(equal("value", JsString(TheZoneToken.value))).toFuture()
     .map(_.headOption.exists(_ == TheZoneToken))
 
   def putToken(): Future[Unit] = {
-    import reactivemongo.bson.BSONDocument
-    val selector = BSONDocument("value" -> TheZoneToken.value)
-    collection.update(selector, TheZoneToken, upsert = true).map(_ => ())
+//    import reactivemongo.bson.BSONDocument
+//    val selector = BSONDocument("value" -> TheZoneToken.value)
+//    collection.update(selector, TheZoneToken, upsert = true).map(_ => ())
+    collection.findOneAndUpdate(equal("value", JsString(TheZoneToken.value)), set("value", JsString(TheZoneToken.value))).toFutureOption()
   }
 }
