@@ -89,6 +89,7 @@ case class ZoneHealthServiceBuilder(
                                      mongoTokenExists: Future[Boolean] = Future.successful(true)
                                    ){
   def build():ZoneHealthService = {
+    import scala.concurrent.ExecutionContext.Implicits.global
 
     val downstream = mock(classOf[ZoneHealthDownstream])
 

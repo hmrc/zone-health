@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.zonehealth.repository
 
-import com.google.inject.Inject
+import javax.inject.{Inject, Singleton}
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.FindOneAndUpdateOptions
 import org.mongodb.scala.model.Updates.set
@@ -24,8 +24,7 @@ import play.api.libs.json._
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 case class ZoneToken(value:String = "1")
@@ -40,7 +39,10 @@ trait ZoneHealthRepository{
   def putToken(): Future[Unit]
 }
 
-class MongoZoneHealthRepository @Inject()(mongo: MongoComponent) extends PlayMongoRepository[ZoneToken](
+@Singleton
+class MongoZoneHealthRepository @Inject()(
+ mongo: MongoComponent
+)(implicit ec: ExecutionContext) extends PlayMongoRepository[ZoneToken](
     mongoComponent = mongo,
     collectionName = "zone-health",
     domainFormat = ZoneToken.mongoFormats,

@@ -16,17 +16,20 @@
 
 package uk.gov.hmrc.zonehealth.service
 
-import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Results
 import uk.gov.hmrc.zonehealth.connectors.ZoneHealthConnector
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import javax.inject.{Singleton, Inject}
+import scala.concurrent.{ExecutionContext, Future}
 
-class ZoneHealthService @Inject() (downstreamConnector: ZoneHealthConnector, mongoRepository: ZoneHealthRepository){
-
+@Singleton
+class ZoneHealthService @Inject()(
+ downstreamConnector: ZoneHealthConnector,
+ mongoRepository: ZoneHealthRepository
+)(implicit ec: ExecutionContext)
+{
   val logger: Logger = Logger(this.getClass)
 
   def checkHealth(): Future[Either[String, Unit]] ={
