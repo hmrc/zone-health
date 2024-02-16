@@ -1,23 +1,15 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
-val silencerVersion = "1.7.3"
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / majorVersion := 0
 
 lazy val microservice = Project("zone-health", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
-  .settings(
-    scalaVersion        := "2.12.13",
-    majorVersion        := 0,
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test ++ AppDependencies.itTest
-  )
-  .settings(SbtDistributablesPlugin.publishingSettings: _*)
-  .configs(IntegrationTest)
-  .settings(DefaultBuildSettings.integrationTestSettings(): _*)
+  .settings(libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(
-      // Use the silencer plugin to suppress warnings from unused imports in routes
-      scalacOptions += "-P:silencer:pathFilters=routes",
-      libraryDependencies ++= Seq(
-          compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-          "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-      )
-  )
+  .settings(scalacOptions += "-Wconf:src=routes/.*:s")
+
+lazy val it = project.in(file("it"))
+  .enablePlugins(play.sbt.PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings())

@@ -37,7 +37,7 @@ class ZoneHealthConnector @Inject() (zoneHealthDownstream: ZoneHealthDownstream,
 }
 
 class ZoneHealthDownstream @Inject()(ws: WSClient) {
-  def httpGetStatus(url:String): Future[Int] = ws.url(url).get.map(_.status)
+  def httpGetStatus(url:String): Future[Int] = ws.url(url).get().map(_.status)
 }
 
 case class DownstreamInstance(url: String)

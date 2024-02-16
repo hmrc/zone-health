@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.zonehealth.controllers
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import com.google.inject.Inject
 import play.api.http.HttpEntity
 import play.api.mvc._
