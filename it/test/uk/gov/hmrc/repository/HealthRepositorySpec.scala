@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.repository
+package test.uk.gov.hmrc.repository
 
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.BeforeAndAfterEach
@@ -43,7 +43,7 @@ class HealthRepositorySpec extends PlaySpec with GuiceOneServerPerSuite with Bef
 
   val healthRepository = app.injector.instanceOf[MongoZoneHealthRepository]
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     Await.result(healthRepository.collection.deleteMany(BsonDocument()).toFuture(), 1.second)
   }
 

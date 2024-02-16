@@ -33,7 +33,7 @@ package uk.gov.hmrc.zonehealth
  */
 
 import com.google.inject.{AbstractModule, Provides}
-import net.ceedubs.ficus.Ficus._
+
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.zonehealth.connectors.DownstreamInstance
 import uk.gov.hmrc.zonehealth.repository.{MongoZoneHealthRepository, ZoneHealthRepository}
@@ -49,7 +49,7 @@ class Module(
   def zoneHealthDownstream(): Option[DownstreamInstance] = {
 
     val zoneHealthDownstreamConfig = "microservice.services.zone-health-downstream"
-    def getServicesConfig(str: String): Option[String] = configuration.underlying.getAs[String](str)
+    def getServicesConfig(str: String): Option[String] = configuration.getOptional[String](str)
 
 
     for { host <- getServicesConfig(s"$zoneHealthDownstreamConfig.host")

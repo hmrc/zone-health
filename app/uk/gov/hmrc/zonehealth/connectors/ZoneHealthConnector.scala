@@ -16,15 +16,20 @@
 
 package uk.gov.hmrc.zonehealth.connectors
 
-import com.google.inject.Inject
 import play.api.libs.ws.WSClient
 import play.api.mvc.Results
 import play.api.mvc.Results._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
-class ZoneHealthConnector @Inject() (zoneHealthDownstream: ZoneHealthDownstream, downstream: Option[DownstreamInstance]) {
+@Singleton
+class ZoneHealthConnector @Inject()(
+ zoneHealthDownstream: ZoneHealthDownstream,
+ downstream: Option[DownstreamInstance]
+)(implicit
+  ec: ExecutionContext
+){
 
   def maybeCheckDownstreamHealth(): Option[Future[Results.Status]] = {
     downstream map { downstreamInstance =>
@@ -36,8 +41,9 @@ class ZoneHealthConnector @Inject() (zoneHealthDownstream: ZoneHealthDownstream,
   }
 }
 
-class ZoneHealthDownstream @Inject()(ws: WSClient) {
-  def httpGetStatus(url:String): Future[Int] = ws.url(url).get.map(_.status)
+@Singleton
+class ZoneHealthDownstream @Inject()(ws: WSClient)(implicit ec: ExecutionContext) {
+  def httpGetStatus(url:String): Future[Int] = ws.url(url).get().map(_.status)
 }
 
 case class DownstreamInstance(url: String)
