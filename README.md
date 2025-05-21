@@ -10,13 +10,27 @@ This microservice has a health check endpoint that will perform the check(s) def
 ## Testing
 
 ```shell
-sbt clean test
+$ cd zone-health/it/test/resources
+docker-compose up -d
+[+] Running 2/2
+ ✔ Network resources_default    Created
+ ✔ Container resources-mongo-1  Started
+
+$ cd ../../..
+$ sbt clean test 
+... output omitted ...
+[info] Run completed in 2 seconds, 418 milliseconds.
+[info] Total number of tests run: 10
+[info] Suites: completed 3, aborted 0
+[info] Tests: succeeded 10, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+[success] Total time: 7 s, completed 21 May 2025, 11:31:08
 ```
 
 The unit tests can be run without any other dependencies. The integration tests require a running mono instance.
-For convenience, when running locally it's possible to uncomment the code in HealthRepositorySpec in order start a
+For convenience, when running locally it's possible to uncomment the code in HealthRepositorySpec in order to start a
 Docker container running mongo. It's commented out as there is no support for starting docker containers within Jenkins.
-Alternatively run `docker-compose up` within the `it/resources` folder to start a container manually.
+Alternatively run `docker-compose up` within the `it/test/resources` folder to start a container manually.
 
 ### License
 
