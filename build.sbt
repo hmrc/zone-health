@@ -1,12 +1,11 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 ThisBuild / majorVersion := 0
 
 lazy val microservice = Project("zone-health", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(scalacOptions += "-Wconf:src=routes/.*:s")
 
 lazy val it = project.in(file("it"))
