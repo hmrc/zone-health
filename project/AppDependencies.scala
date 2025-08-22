@@ -1,11 +1,10 @@
-import play.core.PlayVersion
 import play.sbt.PlayImport
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
-  val hmrcBootstrapVersion = "9.12.0"
-  val hmrcMongoVersion     = "2.6.0"
+  val hmrcBootstrapVersion = "10.1.0"
+  val hmrcMongoVersion     = "2.7.0"
   val mockitoVersion       = "1.17.30"
   val flexmarkVersion      = "0.64.8"
 
