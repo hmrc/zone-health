@@ -1,0 +1,15 @@
+[tools]
+sbt = "1.11.4"
+scala = "2.13.18"
+
+[tasks.test]
+run = "sbt clean test"
+depends = ["docker_up"]
+depends_post = ["docker_down"]
+
+[tasks.docker_up]
+run = "docker-compose -f it/test/resources/docker-compose.yml up -d"
+
+[tasks.docker_down]
+run = "docker-compose -f it/test/resources/docker-compose.yml down"
+
