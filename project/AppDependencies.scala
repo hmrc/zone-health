@@ -3,7 +3,7 @@ import sbt.*
 
 object AppDependencies {
 
-  val hmrcBootstrapVersion = "10.7.0"
+  val hmrcBootstrapVersion = "10.8.0"
   val hmrcMongoVersion     = "2.12.0"
   val mockitoVersion       = "1.17.30"
   val flexmarkVersion      = "0.64.8"
@@ -17,7 +17,7 @@ object AppDependencies {
   val test = Seq(
     "uk.gov.hmrc"            %% "bootstrap-test-play-30"   % hmrcBootstrapVersion % Test,
     "com.vladsch.flexmark"   %  "flexmark-all"             % flexmarkVersion      % Test,
-    "org.mockito"            %% "mockito-scala-scalatest"  % mockitoVersion       % Test
+//    "org.mockito"            %% "mockito-scala-scalatest"  % mockitoVersion       % Test
   )
 
   val itTest = Seq(

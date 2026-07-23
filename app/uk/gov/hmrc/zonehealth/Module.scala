@@ -33,13 +33,13 @@ package uk.gov.hmrc.zonehealth
  */
 
 import com.google.inject.{AbstractModule, Provides}
-
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.zonehealth.connectors.DownstreamInstance
 import uk.gov.hmrc.zonehealth.repository.{MongoZoneHealthRepository, ZoneHealthRepository}
+import scala.annotation.unused
 
 class Module(
-              environment: Environment,
+              @unused environment: Environment,
               configuration: Configuration)  extends AbstractModule {
   override def configure() = {
     bind(classOf[ZoneHealthRepository]).to(classOf[MongoZoneHealthRepository])

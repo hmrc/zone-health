@@ -32,5 +32,5 @@ class MicroserviceHealth @Inject()(cc: ControllerComponents)(zoneHealthService: 
       case Right(_) => Results.Ok
       case Left(e)  => Results.BadGateway.copy(body = HttpEntity.Strict(ByteString(e.getBytes), None))
     }
-	}
+  }
 }

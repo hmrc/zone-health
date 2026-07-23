@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.zonehealth.service
 
-import uk.gov.hmrc.zonehealth.connectors.{DownstreamInstance, ZoneHealthConnector, ZoneHealthDownstream}
+import uk.gov.hmrc.zonehealth.connectors.{ZoneHealthConnector, ZoneHealthDownstream}
 import uk.gov.hmrc.zonehealth.repository.ZoneHealthRepository
 import org.mockito.Mockito._
 
@@ -95,7 +95,7 @@ case class ZoneHealthServiceBuilder(
 
     downstreamUrl.map(ds => when(downstream.httpGetStatus(ds)).thenReturn(downstreamStatus))
 
-    val downstreamConnector = new ZoneHealthConnector(downstream, downstreamUrl.map(DownstreamInstance))
+    val downstreamConnector = new ZoneHealthConnector(downstream, downstreamUrl.map(uk.gov.hmrc.zonehealth.connectors.DownstreamInstance.apply))
 
     new ZoneHealthService(
       downstreamConnector,
