@@ -3,7 +3,7 @@ sbt = "1.11.4"
 scala = "3.3.7"
 
 [tasks.test]
-run = "sbt clean test"
+run = "sbt clean test it/test"
 depends = ["docker_up"]
 depends_post = ["docker_down"]
 
