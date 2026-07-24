@@ -1,9 +1,9 @@
 [tools]
 sbt = "1.11.4"
-scala = "2.13.18"
+scala = "3.3.7"
 
 [tasks.test]
-run = "sbt clean test"
+run = "sbt clean test it/test"
 depends = ["docker_up"]
 depends_post = ["docker_down"]
 
@@ -13,3 +13,8 @@ run = "docker-compose -f it/test/resources/docker-compose.yml up -d"
 [tasks.docker_down]
 run = "docker-compose -f it/test/resources/docker-compose.yml down"
 
+[tasks.run_local]
+description = "Runs the application locally after starting Mongo in Docker"
+run = "sbt run"
+depends = ["docker_up"]
+depends_post = ["docker_down"]

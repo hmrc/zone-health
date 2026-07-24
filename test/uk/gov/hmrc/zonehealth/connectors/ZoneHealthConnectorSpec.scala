@@ -15,7 +15,9 @@
  */
 
 package uk.gov.hmrc.zonehealth.connectors
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits._
 

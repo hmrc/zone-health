@@ -41,7 +41,7 @@ class ZoneHealthService @Inject()(
     (result map {
       case (true, e) => e
       case (false, Left(e)) => Left(s"mongo is unavailable, $e")
-      case (false, Right(e)) => Left(s"mongo is unavailable")
+      case (false, Right(_)) => Left(s"mongo is unavailable")
     }).recover { case e =>
       logger.warn(s"exception getting zone health: '${e.getMessage}'", e)
       Left(s"exception getting zone health: '${e.getMessage}'")

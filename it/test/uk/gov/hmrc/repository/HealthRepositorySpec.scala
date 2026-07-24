@@ -21,10 +21,12 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import uk.gov.hmrc.mongo.logging.ObservableFutureImplicits.SingleObservableFuture
 import uk.gov.hmrc.zonehealth.repository.MongoZoneHealthRepository
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class HealthRepositorySpec extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ScalaFutures
   with IntegrationPatience {
